@@ -1,98 +1,149 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { FontAwesome } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Colors } from '@/constants/theme';
+
+const features = [
+  {
+    icon: 'camera',
+    title: 'Real-time Scanning',
+    description: 'Identify anything in real-time using your camera.',
+  },
+  {
+    icon: 'bug',
+    title: 'Bugs & Insects',
+    description: 'Identify thousands of bugs and insects.',
+  },
+  {
+    icon: 'leaf',
+    title: 'Plants & Trees',
+    description: 'Identify plants, flowers, and trees.',
+  },
+  {
+    icon: 'paw',
+    title: 'Mammals & Scat',
+    description: 'Identify mammals and their scat.',
+  },
+];
+
+const FeatureCard = ({ icon, title, description }) => (
+  <View style={styles.featureCard}>
+    <FontAwesome size={32} name={icon as any} style={styles.featureIcon} />
+    <ThemedText type="subtitle" style={styles.featureTitle}>
+      {title}
+    </ThemedText>
+    <ThemedText style={styles.featureDescription}>{description}</ThemedText>
+  </View>
+);
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
+  return (
+    <ScrollView style={styles.container}>
+      <ThemedView style={styles.headerContainer}>
+        <ThemedText type="title" style={styles.title}>Welcome to EcoSnap!</ThemedText>
+        <ThemedText style={styles.subtitle}>
+          Your guide to the natural world. Snap a photo to identify plants, animals, and more.
         </ThemedText>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/scan')}>
+          <ThemedText style={styles.ctaButtonText}>Start Scanning</ThemedText>
+        </Pressable>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+
+      <ThemedView style={styles.featuresSection}>
+        <ThemedText type="subtitle" style={styles.featuresTitle}>Features</ThemedText>
+        <View style={styles.featuresGrid}>
+          {features.map((feature, index) => (
+            <FeatureCard
+              key={index}
+              icon={feature.icon}
+              title={feature.title}
+              description={feature.description}
+            />
+          ))}
+        </View>
       </ThemedView>
-    </ParallaxScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: Colors.light.background,
+  },
+  headerContainer: {
+    padding: 24,
+    backgroundColor: Colors.light.tint,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 8,
+  },
+  ctaButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 25,
+    marginTop: 24,
+    alignSelf: 'flex-start',
+  },
+  ctaButtonText: {
+    color: Colors.light.tint,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  featuresSection: {
+    padding: 24,
+  },
+  featuresTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  featuresGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  featureCard: {
+    width: '48%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
     alignItems: 'center',
-    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  featureIcon: {
+    marginBottom: 12,
+    color: Colors.light.tint,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  featureTitle: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  featureDescription: {
+    textAlign: 'center',
+    fontSize: 12,
+    marginTop: 4,
+    color: '#666',
   },
 });
