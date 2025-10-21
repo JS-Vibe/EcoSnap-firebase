@@ -8,7 +8,16 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "autoIncrement": true
+    },
+    "preview-android": {
+      "extends": "preview",
+      "android": {}
+    },
+    "preview-ios": {
+      "extends": "preview",
+      "ios": {}
     },
     "production": {}
   },
