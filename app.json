@@ -20,7 +20,8 @@
       "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.jansparwath.ecosnap"
+      "package": "com.jansparwath.ecosnap",
+      "versionCode": 3
     },
     "web": {
       "output": "static",
