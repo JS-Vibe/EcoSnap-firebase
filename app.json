@@ -46,6 +46,14 @@
           "googleServicesFile": "./google-services.json",
           "googleServicesFileIos": "./GoogleService-Info.plist"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "buildReactNativeFromSource": true
+          }
+        }
       ]
     ],
     "experiments": {
