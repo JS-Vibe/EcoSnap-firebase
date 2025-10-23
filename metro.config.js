@@ -2,7 +2,9 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.assetExts.push('bin');
-config.resolver.sourceExts.push('json');
+config.resolver.extraNodeModules = {
+  ...config.resolver.extraNodeModules,
+  'react-native-fs': require.resolve('expo-file-system'),
+};
 
 module.exports = config;
