@@ -58,13 +58,5 @@ target 'ecosnap' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
-    
-    installer.pods_project.targets.each do |target|
-      if target.name == "RNFS"
-        target.build_configurations.each do |config|
-          config.build_settings['HEADER_SEARCH_PATHS'] = '$(inherited) "${PODS_ROOT}/Headers/Public/React-Core"'
-        end
-      end
-    end
   end
 end
