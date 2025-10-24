@@ -10,6 +10,10 @@ tasks.whenTaskAdded { task ->
     if (task.name == 'processReleaseGoogleServices' || task.name == 'processDebugGoogleServices') {
         task.dependsOn copyGoogleServicesFile
     }
+    // Explicitly declare dependency for generateReleaseResources on copyGoogleServicesFile
+    if (task.name == 'generateReleaseResources') {
+        task.dependsOn copyGoogleServicesFile
+    }
 }
 task copyGoogleServicesFile(type: Copy) {
     def googleServicesFile = file("${projectRoot}/google-services.json")
