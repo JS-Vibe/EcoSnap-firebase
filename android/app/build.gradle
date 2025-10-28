@@ -4,28 +4,6 @@ apply plugin: "com.facebook.react"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
-// Add this task to copy google-services.json from the project root to android/app
-// This is a common workaround for EAS builds to ensure the file is found.
-tasks.whenTaskAdded { task ->
-    if (task.name == 'processReleaseGoogleServices' || task.name == 'processDebugGoogleServices') {
-        task.dependsOn copyGoogleServicesFile
-    }
-    // Explicitly declare dependency for generateReleaseResources on copyGoogleServicesFile
-    if (task.name == 'generateReleaseResources') {
-        task.dependsOn copyGoogleServicesFile
-    }
-}
-task copyGoogleServicesFile(type: Copy) {
-    def googleServicesFile = file("${projectRoot}/google-services.json")
-    if (googleServicesFile.exists()) {
-        from googleServicesFile
-        into "src/main/" // Destination is android/app/src/main/
-        println "Copied google-services.json from ${googleServicesFile.absolutePath} to ${destinationDir.absolutePath}"
-    } else {
-        println "WARNING: google-services.json not found at ${googleServicesFile.absolutePath}. Ensure it's in your project root or android/app."
-    }
-}
-
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
