@@ -28,6 +28,13 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>ecosnap</string>
+          <string>com.jansparwath.ecosnap</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+ecosnap</string>
         </array>
       </dict>
     </array>
