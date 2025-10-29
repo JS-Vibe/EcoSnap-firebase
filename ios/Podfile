@@ -38,10 +38,9 @@ target 'ecosnap' do
 
   config = use_native_modules!(config_command)
 
-  # Explicitly set dynamic linkage for all frameworks
-  use_frameworks! :linkage => :dynamic
-  # Explicitly enable modular headers for all pods within the target
-  use_modular_headers!
+  # Changed to static linking
+  use_frameworks! :linkage => :static
+  # Removed use_modular_headers! to allow fine-grained control below
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -51,11 +50,6 @@ target 'ecosnap' do
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
 
-  # Removed specific modular_headers => false for Firebase pods,
-  # and removed the custom post_install block for header settings.
-  # Relying on `use_modular_headers!` to handle modularity.
-  # If issues persist, more targeted investigation of podspec files may be needed.
-  
   post_install do |installer|
     react_native_post_install(
       installer,
@@ -63,5 +57,16 @@ target 'ecosnap' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
+
+    # Explicitly set DEFINES_MODULE to NO and allow non-modular includes for problematic pods
+    installer.pods_project.targets.each do |target|
+      # Target specific pods causing issues with non-modular headers
+      if target.name.start_with?('RNFB') || target.name == 'React-Core' || target.name == 'React-cxxreact' || target.name == 'FBLazyVector' || target.name == 'FBReactNativeSpec' || target.name == 'RCTTypeSafety'
+        target.build_configurations.each do |config_build|
+          config_build.build_settings['DEFINES_MODULE'] = 'NO'
+          config_build.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
+        end
+      end
+    end
   end
 end
