@@ -55,5 +55,21 @@ target 'ecosnap' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
+    
+    installer.pods_project.targets.each do |target|
+      # The following is needed to ensure the "archive" process works correctly.
+      if target.name == "React-Core"
+        target.build_configurations.each do |config|
+          config.build_settings['HEADER_SEARCH_PATHS'] = [
+            "$(PODS_ROOT)/Headers/Public/React-Core",
+          ]
+        end
+      end
+
+      # The following is needed to ensure the "archive" process works correctly.
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
+      end
+    end
   end
 end
