@@ -1,5 +1,5 @@
 
-import { Tabs, Redirect } from 'expo-router';
+import { Tabs } from 'expo-router';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { HapticTab } from '@/components/haptic-tab';
@@ -7,7 +7,6 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { FontAwesome } from '@expo/vector-icons';
-import { useAuth } from '@/context/AuthContext';
 
 const ScanButton = () => (
   <View style={styles.scanButtonContainer}>
@@ -17,11 +16,6 @@ const ScanButton = () => (
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { user } = useAuth();
-
-  if (!user) {
-    return <Redirect href="/(auth)/sign-in" />;
-  }
 
   return (
     <Tabs
@@ -52,11 +46,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="collection"
         options={{
           title: 'My Collection',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="sparkles" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="person" color={color} />
           ),
         }}
       />

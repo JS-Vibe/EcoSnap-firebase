@@ -20,7 +20,8 @@
       "googleServicesFile": "./google-services.json",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.jansparwath.ecosnap"
+      "package": "com.jansparwath.ecosnap",
+      "versionCode": 6
     },
     "web": {
       "output": "static",
@@ -55,7 +56,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "4c753c60-3b36-463e-bd7c-f663bb8610ea"
+        "projectId": "c284e512-89fd-4dc5-9eb7-d723ed692f4d"
       }
     }
   }
