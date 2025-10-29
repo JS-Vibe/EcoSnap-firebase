@@ -60,18 +60,10 @@ target 'ecosnap' do
     )
     
     installer.pods_project.targets.each do |target|
-      # The following is needed to ensure the "archive" process works correctly.
-      if target.name == "React-Core"
+      if target.name.start_with?('RNFB')
         target.build_configurations.each do |config|
-          config.build_settings['HEADER_SEARCH_PATHS'] = [
-            "$(PODS_ROOT)/Headers/Public/React-Core",
-          ]
+          config.build_settings['CLANG_WARN_NON_MODULAR_INCLUDE_IN_FRAMEWORK_MODULE'] = 'NO'
         end
-      end
-
-      # The following is needed to ensure the "archive" process works correctly.
-      target.build_configurations.each do |config|
-        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
       end
     end
   end
