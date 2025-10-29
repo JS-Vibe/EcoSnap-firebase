@@ -50,7 +50,7 @@ target 'ecosnap' do
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
-
+  
   post_install do |installer|
     react_native_post_install(
       installer,
@@ -58,11 +58,12 @@ target 'ecosnap' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
-
-    # Workaround for non-modular header errors in React Native and Firebase
+    # Fix for modular headers issue with React Native and Firebase
     installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config_build|
-        config_build.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
+      if target.name.include?('React') || target.name.include?('RNFB') || target.name.include?('Firebase')
+        target.build_configurations.each do |config|
+          config.build_settings['DEFINES_MODULE'] = 'NO'
+        end
       end
     end
   end
