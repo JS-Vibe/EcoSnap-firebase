@@ -40,8 +40,8 @@ target 'ecosnap' do
 
   # Explicitly set dynamic linkage for all frameworks
   use_frameworks! :linkage => :dynamic
-  # Explicitly enable modular headers for all pods within the target
-  use_modular_headers!
+  # Explicitly enable modular headers for all pods within the target, except problematic ones
+  # use_modular_headers! # Removed this line to control modular_headers more granularly
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -51,6 +51,16 @@ target 'ecosnap' do
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
 
+  # Workaround for non-modular header errors with Firebase and React Native
+  # Ensure specific pods that cause issues are not built with modular headers
+  pod 'FirebaseCore', :modular_headers => false
+  pod 'FirebaseCoreInternal', :modular_headers => false
+  pod 'FirebaseAuth', :modular_headers => false
+  pod 'FirebaseAppCheckInterop', :modular_headers => false
+  pod 'RecaptchaInterop', :modular_headers => false
+  pod 'GoogleUtilities', :modular_headers => false
+  pod 'GTMSessionFetcher', :modular_headers => false
+  
   post_install do |installer|
     react_native_post_install(
       installer,
@@ -59,12 +69,14 @@ target 'ecosnap' do
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
 
-    # Workaround for non-modular header errors with Firebase and React Native
     installer.pods_project.targets.each do |target|
-      if target.name.start_with?('RNFB') || target.name.start_with?('Firebase') || target.name == 'React-Core' || target.name == 'React-cxxreact' || target.name == 'FBLazyVector' || target.name == 'FBReactNativeSpec' || target.name == 'RCTTypeSafety'
-        target.build_configurations.each do |config_build|
-          config_build.build_settings['DEFINES_MODULE'] = 'NO'
-          config_build.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
+      target.build_configurations.each do |config_build|
+        # The previous attempt to set CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE
+        # for a broad set of pods was not enough, and might be redundant with modular_headers => false
+        # for specific pods. Let's ensure this is off for problematic modules.
+        if target.name.start_with?('RNFB') || target.name.start_with?('React-') || target.name.start_with?('EX') || target.name == 'FBLazyVector' || target.name == 'FBReactNativeSpec' || target.name == 'RCTTypeSafety'
+           config_build.build_settings['DEFINES_MODULE'] = 'NO'
+           config_build.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
         end
       end
     end
