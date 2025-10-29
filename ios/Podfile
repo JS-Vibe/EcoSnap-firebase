@@ -61,8 +61,11 @@ target 'ecosnap' do
 
     # Workaround for non-modular header errors with Firebase and React Native
     installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config_build|
-        config_build.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
+      if target.name.start_with?('RNFB') || target.name.start_with?('Firebase') || target.name == 'React-Core' || target.name == 'React-cxxreact' || target.name == 'FBLazyVector' || target.name == 'FBReactNativeSpec' || target.name == 'RCTTypeSafety'
+        target.build_configurations.each do |config_build|
+          config_build.build_settings['DEFINES_MODULE'] = 'NO'
+          config_build.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
+        end
       end
     end
   end
