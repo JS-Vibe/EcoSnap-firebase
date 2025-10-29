@@ -38,9 +38,8 @@ target 'ecosnap' do
 
   config = use_native_modules!(config_command)
 
-  # Explicitly set dynamic linkage for all frameworks
-  use_frameworks! :linkage => :dynamic
-  # Explicitly enable modular headers for all pods within the target
+  # Use static linkage for frameworks to resolve Firebase build issues
+  use_frameworks! :linkage => :static
   use_modular_headers!
 
   use_react_native!(
@@ -58,12 +57,20 @@ target 'ecosnap' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
-    # Fix for modular headers issue with React Native and Firebase
+    
     installer.pods_project.targets.each do |target|
-      if target.name.include?('React') || target.name.include?('RNFB') || target.name.include?('Firebase')
+      # The following is needed to ensure the "archive" process works correctly.
+      if target.name == "React-Core"
         target.build_configurations.each do |config|
-          config.build_settings['DEFINES_MODULE'] = 'NO'
+          config.build_settings['HEADER_SEARCH_PATHS'] = [
+            "$(PODS_ROOT)/Headers/Public/React-Core",
+          ]
         end
+      end
+
+      # The following is needed to ensure the "archive" process works correctly.
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULE'] = 'YES'
       end
     end
   end
